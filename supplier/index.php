@@ -57,49 +57,35 @@
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-2 text-gray-800">User Tables</h1>
+          <h1 class="h3 mb-2 text-gray-800">Supplier Tables</h1>
           <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary" style="float: left;">DataTables</h6>
-
-              <?php if ($_SESSION['user_role_id'] ==2): ?>
-                  <button type="button" class="btn btn-primary btn-sm" style="float: right;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_Adduser">Add User</button>
-              <?php else: ?>
-
-              <?php endif ?>
+              <button type="button" class="btn btn-primary btn-sm" style="float: right;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_Addsupplier">Add Supplier</button>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Username</th>
+                      <th>ID</th>
                       <th>NIC</th>
-                      <th>Branch</th>
-                      <th>Role</th>
-                      <?php if ($_SESSION['user_role_id']==2): ?>
-                        <th></th>
-                        <th></th>
-                      <?php else: ?>
-                      <?php endif ?>
-                      <?php if ($_SESSION['user_role_id']==1): ?>
-                        <th></th>
-                      <?php else: ?>
-                      <?php endif ?>
+                      <th>Name</th>
+                      <th>Contact No.</th>
+                      <th>Address</th>
+                      <th></th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
 
                     <?php 
 
-                        $query ="SELECT A.id , A.user_name ,A.nic ,A.branch , B.name AS userRole
-                        FROM user A 
-                        INNER JOIN role B
-                        ON A.userRole  = B.id;";
-
+                        $query = "SELECT * FROM  supplier";
+                        
                         $result = mysqli_query($conn ,$query);
                         if(mysqli_num_rows($result) > 0){
 
@@ -107,28 +93,15 @@
                           {
                             echo '
                             <tr>
-                            <td>'.$row["user_name"].'</td>
+                            <td>'.$row["id"].'</td>
                             <td>'.$row["nic"].'</td>
-                            <td>'.$row["branch"].'</td>
-                            <td>'.$row["userRole"].'</td>
+                            <td>'.$row["name"].'</td>
+                            <td>'.$row["contact_no"].'</td>
+                            <td>'.$row["address"].'</td>
+                            <td><button type="button" class="btn btn-info btn-sm" onclick="editForm('.$row["id"].')">Edit</button></td>
+                            <td><button type="button" class="btn btn-danger btn-sm" onclick="confirmation(event,'.$row["id"].')">Delete</button></td>
+                            </tr>
                             ';
-
-                            if($_SESSION['user_role_id'] ==2){
-                              echo '
-                               
-                                  <td><button type="button" class="btn btn-danger btn-sm" onclick="confirmation(event,'.$row["id"].')">Delete</button></td>
-                                 
-                              ';
-                            }
-                            if($_SESSION['user_role_id'] ==2 || $_SESSION['user_role_id'] ==1){
-
-                               echo '<td><button type="button" class="btn btn-info btn-sm" onclick="editForm('.$row["id"].')">Edit</button></td>' ;
-
-                            }
-
-                           
-                            echo '</tr>';
-                            
                           }
                         }
                      ?>
@@ -144,6 +117,7 @@
 
       </div>
       <!-- End of Main Content -->
+
       <!-- Footer -->
       <?php include('../include/footer.php');  ?>
       <!-- End of Footer -->
@@ -185,7 +159,7 @@
 
 
 <!-- Modal -->
-<div id="myModal_Adduser" class="modal fade" role="dialog">
+<div id="myModal_Addsupplier" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -195,58 +169,25 @@
         <!-- <h4 class="modal-title">Modal Header</h4> -->
       </div>
       <div class="modal-body">
-        <center><p><span style="font-weight: 700;color: blue;">Add User</span></p></center>
+        <center><p><span style="font-weight: 700;color: blue;">Add Supplier</span></p></center>
         <form>
             <div class="form-group">
                 <label for="nic">NIC</label>
                 <input type="text" class="form-control" id="nic"  placeholder="Enter NIC">
             </div>
             <div class="form-group">
+                <label for="contactNo">Name</label>
+                <input type="text" class="form-control" id="name"  placeholder="Enter Name">
+            </div>
+            <div class="form-group">
                 <label for="contactNo">Contact No</label>
                 <input type="text" class="form-control" id="contactNo"  placeholder="Enter Contact Number">
             </div>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username"  placeholder="Enter Username">
+                <label for="username">Address</label>
+                <textarea rows="4" cols="50" id="address" class="form-control"></textarea>
             </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Password">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Branch</label>
-                <select class="form-control" id="branch">
-                    <option value="">Select</option>
-                    <?php
-
-                        $queryBranch = "SELECT * FROM branch";
-                        $resultBranch = mysqli_query($conn ,$queryBranch);
-                        while($rowBranch = mysqli_fetch_array($resultBranch)){
-
-                          echo '<option value="'.$rowBranch['name'].'">'.$rowBranch['name'].'</option>';
-                        }
-                    ?>
-                    
-                    <!-- <option value="Bothalegama">Bothalegama</option>
-                    <option value="Egaloya">Egaloya</option> -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">User Role</label>
-                <select class="form-control" id="userRole">
-                    <option value="">Select</option>
-                    <?php
-
-                        $queryRole = "SELECT * FROM role";
-                        $resultRole = mysqli_query($conn ,$queryRole);
-                        while($rowRole = mysqli_fetch_array($resultRole)){
-
-                          echo '<option value="'.$rowRole['id'].'">'.$rowRole['name'].'</option>';
-                        }
-                      ?>
-                </select>
-            </div>
-            <button type="button" onclick="myFormAdd()" id="addUserbtn" name="addUserbtn" class="btn btn-primary btn-sm">Submit</button>
+            <button type="button" onclick="myFormAdd()" id="addSupplierbtn" name="addSupplierbtn" class="btn btn-primary btn-sm">Submit</button>
         </form>
       </div>
       <div class="modal-footer" style="height: 40px;">
@@ -269,12 +210,12 @@
   function editForm(id){
 
     $.ajax({
-             url:"../controller/user.php",
+             url:"../controller/supplier.php",
              method:"POST",
              data:{"edit_id":id},
              success:function(data){
                $('#show_pro_edit').html(data);
-               $('#myModal_Edituser').modal('show');
+               $('#myModal_Editsupplier').modal('show');
              }
        });
    }
@@ -292,7 +233,7 @@
   function myFunDelete(id){
 
     $.ajax({
-          url:"../controller/user.php",
+          url:"../controller/supplier.php",
           method:"POST",
           data:{removeID:id},
           success:function(data){
@@ -308,19 +249,17 @@
 
     var nic =document.getElementById('nic').value;
     var contactNo =document.getElementById('contactNo').value;
-    var username =document.getElementById('username').value;
-    var password =document.getElementById('password').value;
-    var branch =document.getElementById('branch').value;
-    var userRole =document.getElementById('userRole').value;
-    var addUserbtn =document.getElementById('addUserbtn').name;
+    var name =document.getElementById('name').value;
+    var address =document.getElementById('address').value;
+    var addSupplierbtn =document.getElementById('addSupplierbtn').name;
 
     $.ajax({
-          url:"../controller/user.php",
+          url:"../controller/supplier.php",
           method:"POST",
-          data:{nic:nic,contactNo:contactNo,username:username,password:password,branch:branch,userRole:userRole,addUserbtn:addUserbtn},
+          data:{nic:nic,contactNo:contactNo,name:name,address:address,addSupplierbtn:addSupplierbtn},
           success:function(data){
            
-            $('#myModal_Adduser').modal('hide');
+            $('#myModal_Addsupplier').modal('hide');
             alert(data);
             location.reload();
           }
@@ -333,16 +272,14 @@
 
     var enic =document.getElementById('enic').value;
     var econtactNo =document.getElementById('econtactNo').value;
-    var eusername =document.getElementById('eusername').value;
-    
-    var ebranch =document.getElementById('ebranch').value;
-    var euserRole =document.getElementById('euserRole').value;
-    var updateUserbtn =document.getElementById('updateUserbtn').name;
+    var ename =document.getElementById('ename').value;
+    var eaddress =document.getElementById('eaddress').value;
+    var updateSupplierbtn =document.getElementById('updateSupplierbtn').name;
 
     $.ajax({
-          url:"../controller/user.php",
+          url:"../controller/supplier.php",
           method:"POST",
-          data:{enic:enic,econtactNo:econtactNo,eusername:eusername,ebranch:ebranch,euserRole:euserRole,updateUserbtn:updateUserbtn,eid:id},
+          data:{enic:enic,econtactNo:econtactNo,ename:ename,eaddress:eaddress,updateSupplierbtn:updateSupplierbtn,eid:id},
           success:function(data){
            
             $('#myModal_Edituser').modal('hide');

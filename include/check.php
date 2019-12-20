@@ -1,8 +1,10 @@
 <!-- check  the login user correct -->
 <?php
     session_start();
-    $user= $_SESSION['username'];
-    if(!isset($_SESSION['username'])){
-    header('Location: index.php');
+    require '../include/config.php';
+    $role= $_SESSION['user_role'];
+    $roleID= $_SESSION['user_role_id'];
+    if(!isset($_SESSION['user_role'])){
+    header('Location: ../index.php');
     }
 ?>
